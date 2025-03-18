@@ -10,13 +10,13 @@ import org.springframework.web.cors.CorsConfiguration;
 
 @Configuration
 public class SecurityConfig {
-    private final String URL = "http://localhost:5173/";
+    private final String URL_ORIGINS = "http://localhost:5173/";
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.cors(cors -> cors.configurationSource(_ -> {
             var corsConfiguration = new CorsConfiguration();
-            corsConfiguration.setAllowedOrigins(List.of(URL));
+            corsConfiguration.setAllowedOrigins(List.of(URL_ORIGINS));
             corsConfiguration.setAllowedMethods(List.of("POST"));
             corsConfiguration.setAllowedHeaders(List.of("*"));
             corsConfiguration.setAllowCredentials(true);
