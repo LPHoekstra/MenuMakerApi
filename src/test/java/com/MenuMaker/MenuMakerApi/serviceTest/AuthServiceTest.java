@@ -41,7 +41,7 @@ public class AuthServiceTest {
     }
 
     @Test
-    void generateTokenWithShortExpiration() throws Exception {
+    void shortTimeTokenShouldGeneratWithSuccess() throws Exception {
         String userEmail = "test@gmail.com";
 
         // act
@@ -62,6 +62,30 @@ public class AuthServiceTest {
         long expectedExpiration = claims.getIssuedAt().getTime() + (10 * 60 * 1000);
 
         assertEquals(expectedExpiration, expiration, "Token must have a 10min expiration");
+    }
+
+    @Test
+    void longTimeTokenShouldGenerateWithSuccess() throws Exception {
+        String userEmail = "test@gmail.com";
+
+        // act
+        String token = authService.longTimeToken(userEmail);
+
+        assertNotNull(token, "Token must not be null");
+
+        Claims claims = Jwts.parser()
+                .verifyWith(secretKey)
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
+        // email validation
+        assertEquals(userEmail, claims.getSubject(), "Expect token payload to be userEmail");
+
+        // expiration validation
+        long expiration = claims.getExpiration().getTime();
+        long expectedExpiration = claims.getIssuedAt().getTime() + (6 * 60 * 60 * 1000);
+
+        assertEquals(expectedExpiration, expiration, "Token must have a 6 hours expiration");
     }
 
     @Test

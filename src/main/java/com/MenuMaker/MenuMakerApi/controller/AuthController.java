@@ -18,6 +18,8 @@ import com.MenuMaker.MenuMakerApi.service.EmailService;
 import com.MenuMaker.MenuMakerApi.utils.ResponseUtils;
 
 import jakarta.mail.MessagingException;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import jakarta.validation.ValidationException;
 import lombok.extern.slf4j.Slf4j;
@@ -64,25 +66,29 @@ public class AuthController {
         }
     }
 
+    // verification if the token expired
     @GetMapping("/login")
-    public ResponseEntity<ApiResponse> getAuthToken(@RequestParam("token") String token) {
+    public ResponseEntity<ApiResponse> getAuthToken(@RequestParam("token") String token, HttpServletResponse response) {
         try {
-            // return string email: get email from token
             String email = authService.getEmailFromToken(token);
 
-            // return boolean: check if he's in DB
             boolean isInDB = authService.isEmailRegistered(email);
 
             if (!isInDB) {
-                // if not created then he's created
+                authService.registerUser(email);
             }
 
             // return string token: create a token of 6 hours validation with email
+            String newToken = authService.longTimeToken(email);
 
-            // in response =>
-            // send token in a httpOnly cookie
+            Cookie cookie = new Cookie("authToken", newToken);
+            cookie.setPath("http://localhost:5173/");
+            cookie.setMaxAge(21600);
+            cookie.setHttpOnly(true);
+            // cookie.setSecure(true); for https
+
             // redirection to the dashbaord ?
-            return ResponseUtils.buildResponse(HttpStatus.OK, "Successfully authenticate", null);
+            return ResponseUtils.buildResponse(HttpStatus.OK, "Successfully authenticate", null, response, cookie);
         } catch (Exception e) {
             return ResponseUtils.buildResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error", null);
         }

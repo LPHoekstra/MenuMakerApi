@@ -31,19 +31,26 @@ public class AuthService {
 
     /**
      * 
-     * @param userEmail take the email to put in the token
+     * @param email to put in the token
      * @return the token with an expiration of 10min
      */
-    public String shortTimeToken(String userEmail) {
-        log.debug("Creating a short time token for email: {}", userEmail);
-        final long JWT_EXPIRATION = 10 * 60 * 1000L;
+    public String shortTimeToken(String email) {
+        log.debug("Creating a short time token for email: {}", email);
+        final Date expirationDate = new Date(new Date().getTime() + 10 * 60 * 1000L);
 
-        return Jwts.builder()
-                .subject(userEmail)
-                .issuedAt(new Date())
-                .expiration(new Date(new Date().getTime() + JWT_EXPIRATION))
-                .signWith(secretKey)
-                .compact();
+        return createToken(email, expirationDate);
+    }
+
+    /**
+     * 
+     * @param email to put in the token
+     * @return the token with an expiration of 6 hours
+     */
+    public String longTimeToken(String email) {
+        log.debug("Creating a 6 hours expiration token for email: {}", email);
+        final Date expirationDate = new Date(new Date().getTime() + 6 * 60 * 60 * 1000L);
+
+        return createToken(email, expirationDate);
     }
 
     /**
@@ -85,5 +92,20 @@ public class AuthService {
         user.setRestaurantName(null);
 
         return userRepository.save(user);
+    }
+
+    /**
+     * 
+     * @param email          of the user to put in the token
+     * @param expirationDate of the token
+     * @return the token
+     */
+    private String createToken(String email, Date expirationDate) {
+        return Jwts.builder()
+                .subject(email)
+                .issuedAt(new Date())
+                .expiration(expirationDate)
+                .signWith(secretKey)
+                .compact();
     }
 }
