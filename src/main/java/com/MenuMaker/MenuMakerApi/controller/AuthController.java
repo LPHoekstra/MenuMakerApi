@@ -67,13 +67,20 @@ public class AuthController {
     @GetMapping("/login")
     public ResponseEntity<ApiResponse> getAuthToken(@RequestParam("token") String token) {
         try {
-            // validate the token
+            // return string email: get email from token
+            String email = authService.getEmailFromToken(token);
 
-            // get email from token then check if he's in DB
+            // return boolean: check if he's in DB
+            boolean isInDB = authService.isEmailRegistered(email);
 
-            // if not created then is created
+            if (!isInDB) {
+                // if not created then he's created
+            }
 
-            // send a cookie with the token on httpOnly
+            // return string token: create a token of 6 hours validation with email
+
+            // in response =>
+            // send token in a httpOnly cookie
             // redirection to the dashbaord ?
             return ResponseUtils.buildResponse(HttpStatus.OK, "Successfully authenticate", null);
         } catch (Exception e) {
