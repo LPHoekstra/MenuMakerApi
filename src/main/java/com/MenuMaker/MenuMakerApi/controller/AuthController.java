@@ -66,30 +66,42 @@ public class AuthController {
         }
     }
 
-    // verification if the token expired
+    // TODO: what if the token is expired no redirection or message ?
     @GetMapping("/login")
     public ResponseEntity<ApiResponse> getAuthToken(@RequestParam("token") String token, HttpServletResponse response) {
         try {
+            log.debug("Authentification with short time token {}", token);
+            int cookieExpiration = 21600; // 6h expiration
+
             String email = authService.getEmailFromToken(token);
 
-            boolean isInDB = authService.isEmailRegistered(email);
+            boolean isEmailInDB = authService.isEmailRegistered(email);
 
-            if (!isInDB) {
+            if (!isEmailInDB) {
                 authService.registerUser(email);
             }
 
-            // return string token: create a token of 6 hours validation with email
             String newToken = authService.longTimeToken(email);
 
-            Cookie cookie = new Cookie("authToken", newToken);
-            cookie.setPath("http://localhost:5173/");
-            cookie.setMaxAge(21600);
-            cookie.setHttpOnly(true);
+            Cookie tokenCookie = new Cookie("authToken", newToken);
+            tokenCookie.setPath("/");
+            tokenCookie.setMaxAge(cookieExpiration);
+            tokenCookie.setHttpOnly(true);
             // cookie.setSecure(true); for https
 
-            // redirection to the dashbaord ?
-            return ResponseUtils.buildResponse(HttpStatus.OK, "Successfully authenticate", null, response, cookie);
+            Cookie isConnectedCookie = new Cookie("isConnected", "1");
+            isConnectedCookie.setPath("/");
+            isConnectedCookie.setMaxAge(cookieExpiration);
+            // cookie.setSecure(true); for https
+
+            response.addCookie(tokenCookie);
+            response.addCookie(isConnectedCookie);
+            response.sendRedirect("http://localhost:5173/dashboard");
+
+            return ResponseUtils.buildResponse(HttpStatus.MOVED_PERMANENTLY, "Successfully authenticate", null,
+                    response);
         } catch (Exception e) {
+            log.error("Error sending auth token {}", e);
             return ResponseUtils.buildResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error", null);
         }
     }
