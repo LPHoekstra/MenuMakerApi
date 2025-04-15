@@ -1,0 +1,106 @@
+swagger: '2.0'
+info:
+  title: Menu Maker API documentation
+  description: Contains all available API endpoints in this codebase
+  version: '1.0.0'
+  termsOfService: 'http://swagger.io/terms/'
+host: localhost:3001
+basePath: /api/v1
+schemes:
+  - http
+paths:
+  /auth/login:
+    post:
+      tags:
+        - Auth Module
+      summary: Send the email for the connection
+      description: API for Login
+      parameters:
+        - in: body
+          name: body
+          description: Login Payload
+          required: true
+          schema:
+            $ref: '#/definitions/Login'
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Email sent
+        '400':
+          description: Invalid Fields
+        '500':
+          description: Internal Server Error
+  /auth/login{token}:
+    get:
+      tags:
+      - Auth Module
+      summary: Get the auth token from email sent
+      description: API for Login
+      parameters:
+        - in: path
+          name: token
+          type: string
+          description: Short duration token
+          required: true
+      responses:
+        "301":
+          description: successfully authenticate
+          headers:
+            Credentials authToken:
+              description: Auth token in httpOnly
+              type: string
+            Credentials isConnected:
+              description: Value = 1 
+              type: string
+        "500":
+          description: Internal Server Error
+  /auth/logout:
+    delete:
+      tags:
+      - Auth Module
+      summary: Disconnect the user
+      description: Disconnect the user by deleting the credential and invalidate the authToken
+      parameters:
+        - in: header
+          type: string
+          name: credentials
+          description: send authToken credentials
+      responses:
+        "200":
+          description: Successfully disconnected
+          headers:
+            Credentials authToken:
+              description: set the expiration date at 0
+              type: string
+            Credentials isConnected:
+              description: set the expiration date at 0
+              type: string
+        "500":
+          description: Internal Server Error
+securityDefinitions:
+  Bearer:
+    type: apiKey
+    in: header
+    name: authToken
+definitions:
+  Login:
+    properties:
+      email:
+        type: string
+        description: user email
+        example: example@gmail.com
+  ApiResponse:
+    type: object
+    properties:
+      status:
+        type: integer
+      message:
+        type: string
+      body:
+        type: object
+        properties:
+          id:
+            type: string
+          email:
+            type: string

@@ -4,9 +4,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,7 +20,6 @@ import com.MenuMaker.MenuMakerApi.service.EmailService;
 import com.MenuMaker.MenuMakerApi.utils.ResponseUtils;
 
 import jakarta.mail.MessagingException;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import jakarta.validation.ValidationException;
@@ -66,42 +67,48 @@ public class AuthController {
         }
     }
 
-    // TODO: what if the token is expired no redirection or message ?
+    // TODO: what if the token is expired, no redirection or message ?
     @GetMapping("/login")
     public ResponseEntity<ApiResponse> getAuthToken(@RequestParam("token") String token, HttpServletResponse response) {
         try {
             log.debug("Authentification with short time token {}", token);
-            int cookieExpiration = 21600; // 6h expiration
 
             String email = authService.getEmailFromToken(token);
-
             boolean isEmailInDB = authService.isEmailRegistered(email);
 
             if (!isEmailInDB) {
                 authService.registerUser(email);
             }
 
-            String newToken = authService.longTimeToken(email);
+            String longTimeToken = authService.longTimeToken(email);
 
-            Cookie tokenCookie = new Cookie("authToken", newToken);
-            tokenCookie.setPath("/");
-            tokenCookie.setMaxAge(cookieExpiration);
-            tokenCookie.setHttpOnly(true);
-            // cookie.setSecure(true); for https
-
-            Cookie isConnectedCookie = new Cookie("isConnected", "1");
-            isConnectedCookie.setPath("/");
-            isConnectedCookie.setMaxAge(cookieExpiration);
-            // cookie.setSecure(true); for https
-
-            response.addCookie(tokenCookie);
-            response.addCookie(isConnectedCookie);
+            authService.createAuthCookie(response, longTimeToken);
             response.sendRedirect("http://localhost:5173/dashboard");
 
             return ResponseUtils.buildResponse(HttpStatus.MOVED_PERMANENTLY, "Successfully authenticate", null,
                     response);
         } catch (Exception e) {
             log.error("Error sending auth token {}", e);
+            // set a redirection to home page
+            return ResponseUtils.buildResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error", null);
+        }
+    }
+
+    @DeleteMapping("/logout")
+    public ResponseEntity<ApiResponse> logout(@RequestHeader("Cookie") String authTokens,
+            HttpServletResponse response) {
+        try {
+            log.debug("logout token {}", authTokens);
+
+            // implement blacklist for token
+            String token = authTokens.split(";")[0].split("=")[1];
+            log.info("token blacklisted {}", token);
+
+            authService.deleteAuthCookie(response);
+
+            return ResponseUtils.buildResponse(HttpStatus.OK, "Successfully disconnected", null);
+        } catch (Exception e) {
+            log.error("Error during logout {}", e);
             return ResponseUtils.buildResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error", null);
         }
     }
