@@ -1,6 +1,7 @@
 package com.MenuMaker.MenuMakerApi.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -31,6 +32,12 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/api/v1/auth")
 public class AuthController {
 
+    @Value("${frontendDomain}")
+    private String frontendDomain;
+
+    @Value("${backendDomain}")
+    private String backendDomain;
+
     private final AuthService authService;
     private final EmailService emailService;
 
@@ -46,7 +53,7 @@ public class AuthController {
             log.debug("Login from {}", loginRequest.getEmail());
             // create a token with 10min expiration time with email
             String token = authService.shortTimeToken(loginRequest.getEmail());
-            String link = "http://localhost:3001/api/v1/auth/login?token=" + token;
+            String link = backendDomain + "/api/v1/auth/login?token=" + token;
 
             // then send email with link
             emailService.sendMagicLink(loginRequest.getEmail(), link);
@@ -83,7 +90,7 @@ public class AuthController {
             String longTimeToken = authService.longTimeToken(email);
 
             authService.createAuthCookie(response, longTimeToken);
-            response.sendRedirect("http://localhost:5173/dashboard");
+            response.sendRedirect(frontendDomain + "/dashboard");
 
             return ResponseUtils.buildResponse(HttpStatus.MOVED_PERMANENTLY, "Successfully authenticate", null,
                     response);
