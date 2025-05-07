@@ -5,7 +5,6 @@ import java.util.Date;
 
 import javax.crypto.SecretKey;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -25,7 +24,6 @@ public class AuthService {
 
     private final UserRepository userRepository;
 
-    @Autowired
     public AuthService(@Value("${secretKey}") String secret, UserRepository userRepository) {
         this.secretKey = Keys.hmacShaKeyFor(Base64.getDecoder().decode(secret));
         this.userRepository = userRepository;

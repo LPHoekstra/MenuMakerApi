@@ -31,7 +31,7 @@ paths:
           description: Invalid Fields
         '500':
           description: Internal Server Error
-  /auth/login{token}:
+  /auth/login/{token}:
     get:
       tags:
       - Auth Module
@@ -78,6 +78,124 @@ paths:
               type: string
         "500":
           description: Internal Server Error
+  /menus/userMenus:
+    get:
+      security:
+        - Bearer: []
+      tags:
+      - Menus Module
+      summary: Get all menus created by user
+      description: Retrieved the menus created by the user
+      responses:
+        "200":
+          description: Menus retrieved successfully
+          schema:
+            $ref: "#/definitions/UserMenusResponse"
+        "401":
+          description: Unauthorized
+        "500":
+          description: Internal Server Error
+  /menus/createMenu:
+    post:
+      security:
+       - Bearer: []
+      tags:
+      - Menus Module
+      summary: Create a menu
+      description: Create a menu from the user
+      parameters:
+        - in: body
+          name: menu informations
+          schema: 
+            $ref: "#/definitions/MenuData"
+          description: object with menu data
+          required: true
+      responses:
+        "200":
+          description: Menu created successfully
+        "400":
+          description: Bad request in body
+        "401":
+          description: Unauthorized
+        "500":
+          description: Interal Server Error
+  /menus/{menuId}:
+    get:
+      security:
+       - Bearer: []
+      tags:
+      - Menus Module
+      summary: Get a specified menu
+      description: Get a menu from the user with the menu id
+      parameters:
+        - in: path
+          type: string
+          name: menuId
+          description: id of the menu to retrieved
+          required: true
+      responses:
+        "200":
+          description: Menu retrieved successfully
+          schema:
+            $ref: "#/definitions/MenuData"
+        "401":
+          description: Unauthorized
+        "404":
+          description: Menu not find
+        "500":
+          description: Interal Server Error
+    put:
+      security:
+       - Bearer: []
+      tags:
+      - Menus Module
+      summary: Update a specified menu
+      description: Update a menu from the user with the menu id
+      parameters:
+        - in: path
+          type: string
+          name: menuId
+          description: id of the menu to update
+          required: true
+        - in: body
+          name: menu informations
+          schema: 
+            $ref: "#/definitions/MenuData"
+          description: object with menu data
+          required: true
+      responses:
+        "200":
+          description: Menu update successfully
+        "400":
+          description: Bad request in body
+        "401":
+          description: Unauthorized
+        "404":
+          description: Menu not find
+        "500":
+          description: Interal Server Error
+    delete:
+      security:
+       - Bearer: []
+      tags:
+      - Menus Module
+      summary: Delete a specified menu
+      description: delete a menu from the user with the menu id
+      parameters:
+        - in: path
+          type: string
+          name: menuId
+          description: id of the menu to delete
+          required: true
+      responses:
+        "200":
+          description: Menu deleted successfully
+        "401":
+          description: Unauthorized
+        "404":
+          description: Menu not find
+        "500":
+          description: Interal Server Error
 securityDefinitions:
   Bearer:
     type: apiKey
@@ -90,6 +208,25 @@ definitions:
         type: string
         description: user email
         example: example@gmail.com
+  UserMenusResponse:
+    type: array
+    items:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "123456789"
+        imgLink:
+          type: string
+        creationDate:
+          type: string
+  MenuData:
+    type: object
+    properties:
+      toDefine: 
+        type: string
+      toDefine2: 
+        type: string
   ApiResponse:
     type: object
     properties:
