@@ -1,5 +1,9 @@
 package com.MenuMaker.MenuMakerApi.repository;
 
-public interface MenuRepository {
+import org.springframework.data.mongodb.repository.MongoRepository;
+
+import com.MenuMaker.MenuMakerApi.model.MenuDataModel;
+
+public interface MenuRepository extends MongoRepository<MenuDataModel, String> {
 
 }

@@ -1,0 +1,26 @@
+package com.MenuMaker.MenuMakerApi.service;
+
+import org.springframework.stereotype.Service;
+
+import com.MenuMaker.MenuMakerApi.model.MenuDataModel;
+import com.MenuMaker.MenuMakerApi.model.request.CreateMenuRequest;
+import com.MenuMaker.MenuMakerApi.repository.MenuRepository;
+
+@Service
+public class MenuService {
+
+    private final MenuRepository menuRepository;
+
+    public MenuService(MenuRepository menuRepository) {
+        this.menuRepository = menuRepository;
+    }
+
+    public MenuDataModel saveMenu(CreateMenuRequest createMenuRequest, String userEmail) {
+        MenuDataModel menuToSave = new MenuDataModel(
+                userEmail,
+                createMenuRequest.getStyle(),
+                createMenuRequest.getContent());
+
+        return menuRepository.save(menuToSave);
+    }
+}

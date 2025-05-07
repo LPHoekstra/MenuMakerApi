@@ -15,9 +15,6 @@ public class UserModel {
     private Date updatedAt;
     // add an img
 
-    void UserModal() {
-    }
-
     public String getId() {
         return this.id;
     }

@@ -29,4 +29,12 @@ public class Dish {
     public void setDescription(String description) {
         this.description = description;
     }
+
+    // public String getImg() {
+    // return this.img;
+    // }
+
+    // public void setImg(String img) {
+    // this.img = img;
+    // }
 }
