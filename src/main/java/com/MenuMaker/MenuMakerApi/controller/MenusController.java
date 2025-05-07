@@ -13,6 +13,7 @@ import com.MenuMaker.MenuMakerApi.model.request.CreateMenuRequest;
 import com.MenuMaker.MenuMakerApi.model.response.ApiResponse;
 import com.MenuMaker.MenuMakerApi.service.AuthService;
 import com.MenuMaker.MenuMakerApi.service.MenuService;
+import com.MenuMaker.MenuMakerApi.utils.Function;
 import com.MenuMaker.MenuMakerApi.utils.ResponseUtils;
 
 import lombok.extern.slf4j.Slf4j;
@@ -37,7 +38,10 @@ public class MenusController {
         try {
             log.debug("Create a menu: {}", createMenuRequest);
 
-            String authToken = cookie.split(";")[0].split("=")[1];
+            String authToken = Function.getCookie(cookie, "authToken");
+            if (authToken == null) {
+                throw new Exception("Error retrieving the authToken cookie");
+            }
             String userEmail = authService.getEmailFromToken(authToken);
 
             MenuDataModel savedMenu = menuService.saveMenu(createMenuRequest, userEmail);

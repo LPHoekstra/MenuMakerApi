@@ -17,6 +17,7 @@ import com.MenuMaker.MenuMakerApi.model.request.LoginRequest;
 import com.MenuMaker.MenuMakerApi.model.response.ApiResponse;
 import com.MenuMaker.MenuMakerApi.service.AuthService;
 import com.MenuMaker.MenuMakerApi.service.EmailService;
+import com.MenuMaker.MenuMakerApi.utils.Function;
 import com.MenuMaker.MenuMakerApi.utils.ResponseUtils;
 
 import jakarta.mail.MessagingException;
@@ -98,13 +99,13 @@ public class AuthController {
     }
 
     @DeleteMapping("/logout")
-    public ResponseEntity<ApiResponse> logout(@RequestHeader("Cookie") String authTokens,
+    public ResponseEntity<ApiResponse> logout(@RequestHeader("Cookie") String cookie,
             HttpServletResponse response) {
         try {
-            log.debug("logout token {}", authTokens);
+            log.debug("logout token {}", cookie);
 
             // implement blacklist for token
-            String token = authTokens.split(";")[0].split("=")[1];
+            String token = Function.getCookie(cookie, "authToken");
             log.info("token blacklisted {}", token);
 
             authService.deleteAuthCookie(response);

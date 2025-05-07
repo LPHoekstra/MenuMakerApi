@@ -18,8 +18,7 @@ public class MenuService {
     public MenuDataModel saveMenu(CreateMenuRequest createMenuRequest, String userEmail) {
         MenuDataModel menuToSave = new MenuDataModel(
                 userEmail,
-                createMenuRequest.getStyle(),
-                createMenuRequest.getContent());
+                createMenuRequest);
 
         return menuRepository.save(menuToSave);
     }
