@@ -14,6 +14,7 @@ import com.MenuMaker.MenuMakerApi.service.AuthService;
 import com.MenuMaker.MenuMakerApi.service.MenuService;
 import com.MenuMaker.MenuMakerApi.utils.ResponseUtils;
 
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -29,10 +30,10 @@ public class MenusController {
         this.authService = authService;
     }
 
-    // need to sent a response 400 for body request
+    // need field validation in createMenuRequest
     @PostMapping("/createMenu")
     public ResponseEntity<ApiResponse> createMenu(@CookieValue("authToken") String authToken,
-            @RequestBody CreateMenuRequest createMenuRequest) {
+            @Valid @RequestBody CreateMenuRequest createMenuRequest) {
         log.debug("Create a menu: {}", createMenuRequest);
 
         String userEmail = authService.getEmailFromToken(authToken);

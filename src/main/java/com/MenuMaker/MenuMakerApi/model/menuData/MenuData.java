@@ -4,9 +4,15 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+
 public abstract class MenuData {
+    @NotNull
     private Date creationDate;
+    @NotNull
     private Style style;
+    @NotEmpty
     private Map<String, List<Dish>> content;
 
     public Date getCreationDate() {
