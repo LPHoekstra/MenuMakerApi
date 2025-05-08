@@ -4,12 +4,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -17,13 +17,11 @@ import com.MenuMaker.MenuMakerApi.model.request.LoginRequest;
 import com.MenuMaker.MenuMakerApi.model.response.ApiResponse;
 import com.MenuMaker.MenuMakerApi.service.AuthService;
 import com.MenuMaker.MenuMakerApi.service.EmailService;
-import com.MenuMaker.MenuMakerApi.utils.Function;
 import com.MenuMaker.MenuMakerApi.utils.ResponseUtils;
 
 import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
-import jakarta.validation.ValidationException;
 import lombok.extern.slf4j.Slf4j;
 
 @Validated
@@ -57,17 +55,9 @@ public class AuthController {
             emailService.sendMagicLink(loginRequest.getEmail(), link);
 
             return ResponseUtils.buildResponse(HttpStatus.OK, "Email sent", null);
-        } catch (ValidationException e) {
-            log.error("Error in login validation: {}", e.getMessage());
-            return ResponseUtils.buildResponse(HttpStatus.BAD_REQUEST, "Invalid Fields", null);
-
         } catch (MessagingException e) {
             log.error("Error while sending email: {}", e.getMessage());
             return ResponseUtils.buildResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Error while email sending", null);
-
-        } catch (Exception e) {
-            log.error("Error in login: {}", e.getMessage());
-            return ResponseUtils.buildResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error", null);
         }
     }
 
@@ -92,28 +82,22 @@ public class AuthController {
             return ResponseUtils.buildResponse(HttpStatus.MOVED_PERMANENTLY, "Successfully authenticate", null,
                     response);
         } catch (Exception e) {
-            log.error("Error sending auth token {}", e);
             // set a redirection to home page
+            log.error("Error sending auth token {}", e);
             return ResponseUtils.buildResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error", null);
         }
     }
 
     @DeleteMapping("/logout")
-    public ResponseEntity<ApiResponse> logout(@RequestHeader("Cookie") String cookie,
+    public ResponseEntity<ApiResponse> logout(@CookieValue("authToken") String authToken,
             HttpServletResponse response) {
-        try {
-            log.debug("logout token {}", cookie);
+        log.debug("logout token {}", authToken);
 
-            // implement blacklist for token
-            String token = Function.getCookie(cookie, "authToken");
-            log.info("token blacklisted {}", token);
+        // implement blacklist for token
+        log.info("token blacklisted {}", authToken);
 
-            authService.deleteAuthCookie(response);
+        authService.deleteAuthCookie(response);
 
-            return ResponseUtils.buildResponse(HttpStatus.OK, "Successfully disconnected", null);
-        } catch (Exception e) {
-            log.error("Error during logout {}", e);
-            return ResponseUtils.buildResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error", null);
-        }
+        return ResponseUtils.buildResponse(HttpStatus.OK, "Successfully disconnected", null);
     }
 }

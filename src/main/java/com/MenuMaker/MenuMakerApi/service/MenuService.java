@@ -15,6 +15,13 @@ public class MenuService {
         this.menuRepository = menuRepository;
     }
 
+    /**
+     * 
+     * @param createMenuRequest
+     * @param userEmail
+     * @return the saved entity; will never be null.
+     * @throws IllegalArgumentException - in case the given entity is null.
+     */
     public MenuDataModel saveMenu(CreateMenuRequest createMenuRequest, String userEmail) {
         MenuDataModel menuToSave = new MenuDataModel(
                 userEmail,
