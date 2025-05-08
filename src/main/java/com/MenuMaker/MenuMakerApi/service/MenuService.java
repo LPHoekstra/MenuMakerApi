@@ -1,11 +1,19 @@
 package com.MenuMaker.MenuMakerApi.service;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 import com.MenuMaker.MenuMakerApi.model.MenuDataModel;
 import com.MenuMaker.MenuMakerApi.model.request.CreateMenuRequest;
+import com.MenuMaker.MenuMakerApi.model.response.UserMenusResponse;
 import com.MenuMaker.MenuMakerApi.repository.MenuRepository;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Service
 public class MenuService {
 
@@ -28,5 +36,23 @@ public class MenuService {
                 createMenuRequest);
 
         return menuRepository.save(menuToSave);
+    }
+
+    public List<UserMenusResponse> getMenusDatas(String userEmail) {
+        List<MenuDataModel> arrayDataModels = menuRepository.findAllByUserEmail(userEmail);
+
+        log.info(userEmail);
+
+        List<UserMenusResponse> arrayToSend = new ArrayList<>();
+
+        for (MenuDataModel menuDataModel : arrayDataModels) {
+            String id = menuDataModel.getId();
+            Date creationDate = menuDataModel.getMenuData().getCreationDate();
+
+            UserMenusResponse menuResponse = new UserMenusResponse(id, creationDate);
+            arrayToSend.add(menuResponse);
+        }
+
+        return arrayToSend;
     }
 }
