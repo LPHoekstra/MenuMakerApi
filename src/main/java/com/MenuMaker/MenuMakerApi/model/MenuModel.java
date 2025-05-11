@@ -5,14 +5,14 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.MenuMaker.MenuMakerApi.model.menuData.MenuData;
 
-@Document(collection = "menuData")
-public class MenuDataModel {
+@Document(collection = "menus")
+public class MenuModel {
     @Id
     private String id;
     private String userEmail;
     private MenuData menuData;
 
-    public MenuDataModel() {
+    public MenuModel() {
     }
 
     public String getId() {

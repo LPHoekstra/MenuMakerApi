@@ -6,7 +6,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.MenuMaker.MenuMakerApi.model.MenuDataModel;
+import com.MenuMaker.MenuMakerApi.model.MenuModel;
 import com.MenuMaker.MenuMakerApi.model.menuData.MenuData;
 import com.MenuMaker.MenuMakerApi.model.request.CreateMenuRequest;
 import com.MenuMaker.MenuMakerApi.model.response.UserMenusResponse;
@@ -31,27 +31,33 @@ public class MenuService {
      * @return the saved entity; will never be null.
      * @throws IllegalArgumentException - in case the given entity is null.
      */
-    public MenuDataModel saveMenu(CreateMenuRequest createMenuRequest, String userEmail) {
+    public MenuModel saveMenu(CreateMenuRequest createMenuRequest, String userEmail) {
         MenuData menuData = new MenuData();
         menuData.setCreationDate(createMenuRequest.getCreationDate());
         menuData.setStyle(createMenuRequest.getStyle());
         menuData.setContent(createMenuRequest.getContent());
 
-        MenuDataModel menuToSave = new MenuDataModel();
+        MenuModel menuToSave = new MenuModel();
         menuToSave.setUserEmail(userEmail);
         menuToSave.setMenuData(menuData);
 
         return menuRepository.save(menuToSave);
     }
 
+    /**
+     * Get all menus created by the user with their email.
+     * 
+     * @param userEmail
+     * @return an array of {@link UserMenusResponse}
+     */
     public List<UserMenusResponse> getMenusDatas(String userEmail) {
-        List<MenuDataModel> arrayDataModels = menuRepository.findAllByUserEmail(userEmail);
+        List<MenuModel> arrayMenuModel = menuRepository.findAllByUserEmail(userEmail);
 
         List<UserMenusResponse> arrayToSend = new ArrayList<>();
 
-        for (MenuDataModel menuDataModel : arrayDataModels) {
-            String id = menuDataModel.getId();
-            Date creationDate = menuDataModel.getMenuData().getCreationDate();
+        for (MenuModel menuModel : arrayMenuModel) {
+            String id = menuModel.getId();
+            Date creationDate = menuModel.getMenuData().getCreationDate();
 
             UserMenusResponse menuResponse = new UserMenusResponse(id, creationDate);
             arrayToSend.add(menuResponse);

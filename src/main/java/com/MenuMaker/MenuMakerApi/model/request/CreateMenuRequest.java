@@ -4,44 +4,33 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import com.MenuMaker.MenuMakerApi.model.abstractClass.AbstractMenuData;
 import com.MenuMaker.MenuMakerApi.model.menuData.Dish;
 import com.MenuMaker.MenuMakerApi.model.menuData.Style;
 
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
-public class CreateMenuRequest {
-    @NotNull
-    private Date creationDate;
-    @NotNull
-    private Style style;
-    @NotEmpty
-    private Map<String, List<Dish>> content;
+public class CreateMenuRequest extends AbstractMenuData {
 
     public CreateMenuRequest() {
     }
 
+    @Override
+    @NotNull
     public Date getCreationDate() {
-        return this.creationDate;
+        return super.getCreationDate();
     }
 
-    public void setCreationDate(Date creationDate) {
-        this.creationDate = creationDate;
-    }
-
+    @Override
+    @NotNull
     public Style getStyle() {
-        return this.style;
+        return super.getStyle();
     }
 
-    public void setStyle(Style style) {
-        this.style = style;
-    }
-
+    @Override
+    @NotEmpty
     public Map<String, List<Dish>> getContent() {
-        return this.content;
-    }
-
-    public void setContent(Map<String, List<Dish>> content) {
-        this.content = content;
+        return super.getContent();
     }
 }
