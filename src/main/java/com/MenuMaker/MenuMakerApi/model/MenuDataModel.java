@@ -12,9 +12,7 @@ public class MenuDataModel {
     private String userEmail;
     private MenuData menuData;
 
-    public MenuDataModel(String userEmail, MenuData menuData) {
-        this.userEmail = userEmail;
-        this.menuData = menuData;
+    public MenuDataModel() {
     }
 
     public String getId() {

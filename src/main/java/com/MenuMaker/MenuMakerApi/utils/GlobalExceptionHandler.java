@@ -19,7 +19,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse> unhandledException(Exception e) {
-        log.error("Server error: {}", e.getMessage());
+        log.error("Server error: {}", e);
         return ResponseUtils.buildResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error", null);
     }
 

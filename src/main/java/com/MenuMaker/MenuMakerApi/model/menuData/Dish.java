@@ -1,13 +1,8 @@
 package com.MenuMaker.MenuMakerApi.model.menuData;
 
-import jakarta.validation.constraints.NotBlank;
-
 public class Dish {
-    @NotBlank
     private String name;
-    @NotBlank
     private String price;
-    @NotBlank
     private String description;
     // private String img;
 

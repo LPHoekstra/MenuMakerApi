@@ -7,6 +7,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.MenuMaker.MenuMakerApi.model.MenuDataModel;
+import com.MenuMaker.MenuMakerApi.model.menuData.MenuData;
 import com.MenuMaker.MenuMakerApi.model.request.CreateMenuRequest;
 import com.MenuMaker.MenuMakerApi.model.response.UserMenusResponse;
 import com.MenuMaker.MenuMakerApi.repository.MenuRepository;
@@ -25,23 +26,26 @@ public class MenuService {
 
     /**
      * 
-     * @param createMenuRequest
+     * @param menuData
      * @param userEmail
      * @return the saved entity; will never be null.
      * @throws IllegalArgumentException - in case the given entity is null.
      */
     public MenuDataModel saveMenu(CreateMenuRequest createMenuRequest, String userEmail) {
-        MenuDataModel menuToSave = new MenuDataModel(
-                userEmail,
-                createMenuRequest);
+        MenuData menuData = new MenuData();
+        menuData.setCreationDate(createMenuRequest.getCreationDate());
+        menuData.setStyle(createMenuRequest.getStyle());
+        menuData.setContent(createMenuRequest.getContent());
+
+        MenuDataModel menuToSave = new MenuDataModel();
+        menuToSave.setUserEmail(userEmail);
+        menuToSave.setMenuData(menuData);
 
         return menuRepository.save(menuToSave);
     }
 
     public List<UserMenusResponse> getMenusDatas(String userEmail) {
         List<MenuDataModel> arrayDataModels = menuRepository.findAllByUserEmail(userEmail);
-
-        log.info(userEmail);
 
         List<UserMenusResponse> arrayToSend = new ArrayList<>();
 

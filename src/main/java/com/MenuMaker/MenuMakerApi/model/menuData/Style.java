@@ -1,11 +1,7 @@
 package com.MenuMaker.MenuMakerApi.model.menuData;
 
-import jakarta.validation.constraints.NotBlank;
-
 public class Style {
-    @NotBlank
     private String color; // create a type with only the available color
-    @NotBlank
     private String fontFamily; // create a type with only the available fontFamily
 
     public String getColor() {
