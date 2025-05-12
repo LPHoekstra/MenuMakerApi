@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.MenuMaker.MenuMakerApi.model.request.CreateMenuRequest;
 import com.MenuMaker.MenuMakerApi.model.response.ApiResponse;
+import com.MenuMaker.MenuMakerApi.model.response.UserMenuResponse;
 import com.MenuMaker.MenuMakerApi.model.response.UserMenusResponse;
 import com.MenuMaker.MenuMakerApi.service.AuthService;
 import com.MenuMaker.MenuMakerApi.service.MenuService;
@@ -59,12 +60,24 @@ public class MenusController {
         return ResponseUtils.buildResponse(HttpStatus.OK, "Menus retrieved successfully", data);
     }
 
+    @GetMapping("/{menuId}")
+    public ResponseEntity<ApiResponse> getUserMenu(@PathVariable("menuId") String menuId,
+            @CookieValue("authToken") String authToken) {
+        log.debug("Getting menu with id: {}", menuId);
+
+        // need token verification
+        authService.getEmailFromToken(authToken);
+        UserMenuResponse userMenuResponse = menuService.getMenu(menuId);
+
+        return ResponseUtils.buildResponse(HttpStatus.OK, "Menu retrieved successfully", userMenuResponse);
+    }
+
     @DeleteMapping("/{menuId}")
     public ResponseEntity<ApiResponse> deleteUserMenu(@PathVariable("menuId") String menuId,
             @CookieValue("authToken") String authToken) {
         log.debug("Deleting menu with id: {}", menuId);
 
-        // token verification
+        // need token verification
         authService.getEmailFromToken(authToken);
         menuService.deleteMenu(menuId);
 

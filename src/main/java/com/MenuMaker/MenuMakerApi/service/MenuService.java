@@ -3,15 +3,18 @@ package com.MenuMaker.MenuMakerApi.service;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
 import com.MenuMaker.MenuMakerApi.model.MenuModel;
 import com.MenuMaker.MenuMakerApi.model.menuData.MenuData;
 import com.MenuMaker.MenuMakerApi.model.request.CreateMenuRequest;
+import com.MenuMaker.MenuMakerApi.model.response.UserMenuResponse;
 import com.MenuMaker.MenuMakerApi.model.response.UserMenusResponse;
 import com.MenuMaker.MenuMakerApi.repository.MenuRepository;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -64,6 +67,23 @@ public class MenuService {
         }
 
         return arrayToSend;
+    }
+
+    public UserMenuResponse getMenu(String menuId) {
+        Optional<MenuModel> menu = menuRepository.findById(menuId);
+
+        if (menu == null) {
+            throw new EntityNotFoundException(menuId);
+        }
+
+        MenuData menuData = menu.get().getMenuData();
+
+        UserMenuResponse userMenuResponse = new UserMenuResponse(
+                menuData.getCreationDate(),
+                menuData.getStyle(),
+                menuData.getContent());
+
+        return userMenuResponse;
     }
 
     /**

@@ -10,6 +10,7 @@ import com.MenuMaker.MenuMakerApi.model.response.ApiResponse;
 
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.security.SignatureException;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.ValidationException;
 import lombok.extern.slf4j.Slf4j;
 
@@ -51,5 +52,11 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse> nullParamException(IllegalArgumentException e) {
         log.error("Given entity is null: {}", e);
         return ResponseUtils.buildResponse(HttpStatus.BAD_REQUEST, "Bad Request", null);
+    }
+
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<ApiResponse> entityNotFoundException(EntityNotFoundException e) {
+        log.error("Given entity not found: {}", e);
+        return ResponseUtils.buildResponse(HttpStatus.NOT_FOUND, "Not found", null);
     }
 }
