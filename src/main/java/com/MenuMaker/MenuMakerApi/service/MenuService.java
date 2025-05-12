@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import com.MenuMaker.MenuMakerApi.model.MenuModel;
 import com.MenuMaker.MenuMakerApi.model.menuData.MenuData;
 import com.MenuMaker.MenuMakerApi.model.request.CreateMenuRequest;
+import com.MenuMaker.MenuMakerApi.model.request.PutMenuRequest;
 import com.MenuMaker.MenuMakerApi.model.response.UserMenuResponse;
 import com.MenuMaker.MenuMakerApi.model.response.UserMenusResponse;
 import com.MenuMaker.MenuMakerApi.repository.MenuRepository;
@@ -69,14 +70,20 @@ public class MenuService {
         return arrayToSend;
     }
 
+    /**
+     * Get a specific menu with his id in the DB and return it
+     * 
+     * @param menuId
+     * @return
+     */
     public UserMenuResponse getMenu(String menuId) {
-        Optional<MenuModel> menu = menuRepository.findById(menuId);
+        Optional<MenuModel> menuOptional = menuRepository.findById(menuId);
 
-        if (menu == null) {
+        if (menuOptional.isEmpty()) {
             throw new EntityNotFoundException(menuId);
         }
 
-        MenuData menuData = menu.get().getMenuData();
+        MenuData menuData = menuOptional.get().getMenuData();
 
         UserMenuResponse userMenuResponse = new UserMenuResponse(
                 menuData.getCreationDate(),
@@ -94,5 +101,28 @@ public class MenuService {
      */
     public void deleteMenu(String menuId) {
         menuRepository.deleteById(menuId);
+    }
+
+    /**
+     * 
+     * @param menuId
+     * @param putMenuRequest
+     * @return the saved entity; will never be null.
+     */
+    public MenuModel putMenu(String menuId, PutMenuRequest putMenuRequest) {
+        Optional<MenuModel> menuOptional = menuRepository.findById(menuId);
+
+        if (menuOptional.isEmpty()) {
+            throw new EntityNotFoundException("Menu not found");
+        }
+
+        MenuModel menu = menuOptional.get();
+        MenuData savedMenu = menu.getMenuData();
+        savedMenu.setContent(putMenuRequest.getContent());
+        savedMenu.setStyle(putMenuRequest.getStyle());
+
+        menu.setMenuData(savedMenu);
+
+        return menuRepository.save(menu);
     }
 }

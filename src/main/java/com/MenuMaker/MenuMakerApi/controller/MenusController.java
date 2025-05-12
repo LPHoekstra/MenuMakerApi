@@ -9,11 +9,13 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.MenuMaker.MenuMakerApi.model.request.CreateMenuRequest;
+import com.MenuMaker.MenuMakerApi.model.request.PutMenuRequest;
 import com.MenuMaker.MenuMakerApi.model.response.ApiResponse;
 import com.MenuMaker.MenuMakerApi.model.response.UserMenuResponse;
 import com.MenuMaker.MenuMakerApi.model.response.UserMenusResponse;
@@ -37,7 +39,6 @@ public class MenusController {
         this.authService = authService;
     }
 
-    // need field validation in createMenuRequest
     @PostMapping("/createMenu")
     public ResponseEntity<ApiResponse> createMenu(@CookieValue("authToken") String authToken,
             @Valid @RequestBody CreateMenuRequest createMenuRequest) {
@@ -70,6 +71,19 @@ public class MenusController {
         UserMenuResponse userMenuResponse = menuService.getMenu(menuId);
 
         return ResponseUtils.buildResponse(HttpStatus.OK, "Menu retrieved successfully", userMenuResponse);
+    }
+
+    @PutMapping("/{menuId}")
+    public ResponseEntity<ApiResponse> putUserMenu(@PathVariable("menuId") String menuId,
+            @CookieValue("authToken") String authToken,
+            @RequestBody PutMenuRequest putMenuRequest) {
+        log.debug("Put menu with id: {}", menuId);
+
+        // need token verification
+        authService.getEmailFromToken(authToken);
+        menuService.putMenu(menuId, putMenuRequest);
+
+        return ResponseUtils.buildResponse(HttpStatus.OK, "Menu update successfully", null);
     }
 
     @DeleteMapping("/{menuId}")
