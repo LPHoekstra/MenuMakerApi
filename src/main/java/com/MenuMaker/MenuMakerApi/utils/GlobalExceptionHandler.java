@@ -46,4 +46,10 @@ public class GlobalExceptionHandler {
         log.error("Error in field validation: {}", e.getMessage());
         return ResponseUtils.buildResponse(HttpStatus.BAD_REQUEST, "Invalid Fields", null);
     }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ApiResponse> nullParamException(IllegalArgumentException e) {
+        log.error("Given entity is null: {}", e);
+        return ResponseUtils.buildResponse(HttpStatus.BAD_REQUEST, "Bad Request", null);
+    }
 }

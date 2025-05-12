@@ -65,4 +65,14 @@ public class MenuService {
 
         return arrayToSend;
     }
+
+    /**
+     * Delete a specific menu with his id
+     * 
+     * @param menuId id of the menu
+     * @throws IllegalArgumentException - in case the given id is null.
+     */
+    public void deleteMenu(String menuId) {
+        menuRepository.deleteById(menuId);
+    }
 }
