@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import com.MenuMaker.MenuMakerApi.model.MenuModel;
@@ -74,14 +75,17 @@ public class MenuService {
      * Get a specific menu with his id in the DB and return it
      * 
      * @param menuId
+     * @param userEmail
      * @return
      */
-    public UserMenuResponse getMenu(String menuId) {
+    public UserMenuResponse getMenu(String menuId, String userEmail) {
         Optional<MenuModel> menuOptional = menuRepository.findById(menuId);
 
         if (menuOptional.isEmpty()) {
             throw new EntityNotFoundException(menuId);
         }
+
+        checkMenuOwnership(userEmail, menuOptional);
 
         MenuData menuData = menuOptional.get().getMenuData();
 
@@ -96,33 +100,49 @@ public class MenuService {
     /**
      * Delete a specific menu with his id
      * 
-     * @param menuId id of the menu
+     * @param menuId    id of the menu
+     * @param userEmail got from the auth token to verified if the menu belongs to
+     *                  the logged user
      * @throws IllegalArgumentException - in case the given id is null.
      */
-    public void deleteMenu(String menuId) {
+    public void deleteMenu(String menuId, String userEmail) {
+        Optional<MenuModel> menuToDelete = menuRepository.findById(menuId);
+
+        if (menuToDelete.isEmpty()) {
+            throw new EntityNotFoundException(menuId);
+        }
+
+        checkMenuOwnership(userEmail, menuToDelete);
+
         menuRepository.deleteById(menuId);
     }
 
     /**
      * 
-     * @param menuId
-     * @param putMenuRequest
+     * @param menuId         to update
+     * @param userEmail      got from the auth token
+     * @param putMenuRequest body reqest with the menu data
      * @return the saved entity; will never be null.
      */
-    public MenuModel putMenu(String menuId, PutMenuRequest putMenuRequest) {
+    public MenuModel putMenu(String menuId, String userEmail, PutMenuRequest putMenuRequest) {
         Optional<MenuModel> menuOptional = menuRepository.findById(menuId);
 
         if (menuOptional.isEmpty()) {
             throw new EntityNotFoundException("Menu not found");
         }
 
-        MenuModel menu = menuOptional.get();
-        MenuData savedMenu = menu.getMenuData();
-        savedMenu.setContent(putMenuRequest.getContent());
-        savedMenu.setStyle(putMenuRequest.getStyle());
+        checkMenuOwnership(userEmail, menuOptional);
 
-        menu.setMenuData(savedMenu);
+        MenuModel menu = menuOptional.get();
+        menu.getMenuData().setContent(putMenuRequest.getContent());
+        menu.getMenuData().setStyle(putMenuRequest.getStyle());
 
         return menuRepository.save(menu);
+    }
+
+    private void checkMenuOwnership(String userEmail, Optional<MenuModel> menuFromDb) {
+        if (!userEmail.equals(menuFromDb.get().getUserEmail())) {
+            throw new AccessDeniedException("Not authorized to interact with this menu");
+        }
     }
 }

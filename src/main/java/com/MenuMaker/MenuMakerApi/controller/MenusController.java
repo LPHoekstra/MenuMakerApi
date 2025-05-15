@@ -67,8 +67,8 @@ public class MenusController {
         log.debug("Getting menu with id: {}", menuId);
 
         // need token verification
-        authService.getEmailFromToken(authToken);
-        UserMenuResponse userMenuResponse = menuService.getMenu(menuId);
+        String userEmail = authService.getEmailFromToken(authToken);
+        UserMenuResponse userMenuResponse = menuService.getMenu(menuId, userEmail);
 
         return ResponseUtils.buildResponse(HttpStatus.OK, "Menu retrieved successfully", userMenuResponse);
     }
@@ -80,8 +80,8 @@ public class MenusController {
         log.debug("Put menu with id: {}", menuId);
 
         // need token verification
-        authService.getEmailFromToken(authToken);
-        menuService.putMenu(menuId, putMenuRequest);
+        String userEmail = authService.getEmailFromToken(authToken);
+        menuService.putMenu(menuId, userEmail, putMenuRequest);
 
         return ResponseUtils.buildResponse(HttpStatus.OK, "Menu update successfully", null);
     }
@@ -92,8 +92,8 @@ public class MenusController {
         log.debug("Deleting menu with id: {}", menuId);
 
         // need token verification
-        authService.getEmailFromToken(authToken);
-        menuService.deleteMenu(menuId);
+        String userEmail = authService.getEmailFromToken(authToken);
+        menuService.deleteMenu(menuId, userEmail);
 
         return ResponseUtils.buildResponse(HttpStatus.OK, "Menu deleted successfully", null);
     }

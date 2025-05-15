@@ -2,6 +2,7 @@ package com.MenuMaker.MenuMakerApi.utils;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MissingRequestCookieException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -58,5 +59,11 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse> entityNotFoundException(EntityNotFoundException e) {
         log.error("Given entity not found: {}", e);
         return ResponseUtils.buildResponse(HttpStatus.NOT_FOUND, "Not found", null);
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ApiResponse> accessDeniedException(AccessDeniedException e) {
+        log.error("Access denied: {}", e);
+        return ResponseUtils.buildResponse(HttpStatus.FORBIDDEN, "Access denied", null);
     }
 }
