@@ -19,8 +19,8 @@ import com.MenuMaker.MenuMakerApi.model.request.PutMenuRequest;
 import com.MenuMaker.MenuMakerApi.model.response.ApiResponse;
 import com.MenuMaker.MenuMakerApi.model.response.UserMenuResponse;
 import com.MenuMaker.MenuMakerApi.model.response.UserMenusResponse;
-import com.MenuMaker.MenuMakerApi.service.AuthService;
 import com.MenuMaker.MenuMakerApi.service.MenuService;
+import com.MenuMaker.MenuMakerApi.service.TokenService;
 import com.MenuMaker.MenuMakerApi.utils.ResponseUtils;
 
 import jakarta.validation.Valid;
@@ -32,11 +32,11 @@ import lombok.extern.slf4j.Slf4j;
 public class MenusController {
 
     private final MenuService menuService;
-    private final AuthService authService;
+    private final TokenService tokenService;
 
-    MenusController(MenuService menuService, AuthService authService) {
+    MenusController(MenuService menuService, TokenService tokenService) {
         this.menuService = menuService;
-        this.authService = authService;
+        this.tokenService = tokenService;
     }
 
     @PostMapping("/createMenu")
@@ -44,7 +44,7 @@ public class MenusController {
             @Valid @RequestBody CreateMenuRequest createMenuRequest) {
         log.debug("Create a menu: {}", createMenuRequest);
 
-        String userEmail = authService.getEmailFromToken(authToken);
+        String userEmail = tokenService.getEmailFromToken(authToken);
 
         menuService.saveMenu(createMenuRequest, userEmail);
 
@@ -55,7 +55,7 @@ public class MenusController {
     public ResponseEntity<ApiResponse> getUserMenus(@CookieValue("authToken") String authToken) {
         log.debug("Getting menu with token: {}", authToken);
 
-        String userEmail = authService.getEmailFromToken(authToken);
+        String userEmail = tokenService.getEmailFromToken(authToken);
         List<UserMenusResponse> data = menuService.getMenusDatas(userEmail);
 
         return ResponseUtils.buildResponse(HttpStatus.OK, "Menus retrieved successfully", data);
@@ -67,7 +67,7 @@ public class MenusController {
         log.debug("Getting menu with id: {}", menuId);
 
         // need token verification
-        String userEmail = authService.getEmailFromToken(authToken);
+        String userEmail = tokenService.getEmailFromToken(authToken);
         UserMenuResponse userMenuResponse = menuService.getMenu(menuId, userEmail);
 
         return ResponseUtils.buildResponse(HttpStatus.OK, "Menu retrieved successfully", userMenuResponse);
@@ -80,7 +80,7 @@ public class MenusController {
         log.debug("Put menu with id: {}", menuId);
 
         // need token verification
-        String userEmail = authService.getEmailFromToken(authToken);
+        String userEmail = tokenService.getEmailFromToken(authToken);
         menuService.putMenu(menuId, userEmail, putMenuRequest);
 
         return ResponseUtils.buildResponse(HttpStatus.OK, "Menu update successfully", null);
@@ -92,7 +92,7 @@ public class MenusController {
         log.debug("Deleting menu with id: {}", menuId);
 
         // need token verification
-        String userEmail = authService.getEmailFromToken(authToken);
+        String userEmail = tokenService.getEmailFromToken(authToken);
         menuService.deleteMenu(menuId, userEmail);
 
         return ResponseUtils.buildResponse(HttpStatus.OK, "Menu deleted successfully", null);

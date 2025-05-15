@@ -21,6 +21,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import com.MenuMaker.MenuMakerApi.model.UserModel;
 import com.MenuMaker.MenuMakerApi.repository.UserRepository;
 import com.MenuMaker.MenuMakerApi.service.AuthService;
+import com.MenuMaker.MenuMakerApi.service.TokenService;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -33,11 +34,13 @@ public class AuthServiceTest {
 
     private UserRepository userRepository;
     private AuthService authService;
+    private TokenService tokenService;
 
     @BeforeEach
     void setUp() {
         userRepository = mock(UserRepository.class);
-        authService = new AuthService(secret, userRepository);
+        authService = new AuthService(userRepository);
+        tokenService = mock(TokenService.class);
     }
 
     @Test
@@ -45,7 +48,7 @@ public class AuthServiceTest {
         String userEmail = "test@gmail.com";
 
         // act
-        String token = authService.shortTimeToken(userEmail);
+        String token = tokenService.shortTimeToken(userEmail);
 
         assertNotNull(token, "Token must not be null");
 
@@ -69,7 +72,7 @@ public class AuthServiceTest {
         String userEmail = "test@gmail.com";
 
         // act
-        String token = authService.longTimeToken(userEmail);
+        String token = tokenService.longTimeToken(userEmail);
 
         assertNotNull(token, "Token must not be null");
 
@@ -93,9 +96,9 @@ public class AuthServiceTest {
         String userEmail = "test@gmail.com";
 
         // act
-        String token = authService.shortTimeToken(userEmail);
+        String token = tokenService.shortTimeToken(userEmail);
 
-        String email = authService.getEmailFromToken(token);
+        String email = tokenService.getEmailFromToken(token);
 
         assertEquals(userEmail, email);
     }

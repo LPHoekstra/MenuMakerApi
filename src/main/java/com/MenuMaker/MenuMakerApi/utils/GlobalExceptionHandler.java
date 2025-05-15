@@ -51,19 +51,19 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ApiResponse> nullParamException(IllegalArgumentException e) {
-        log.error("Given entity is null: {}", e);
+        log.error("Given entity is null: {}", e.getMessage());
         return ResponseUtils.buildResponse(HttpStatus.BAD_REQUEST, "Bad Request", null);
     }
 
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<ApiResponse> entityNotFoundException(EntityNotFoundException e) {
-        log.error("Given entity not found: {}", e);
+        log.error("Given entity not found: {}", e.getMessage());
         return ResponseUtils.buildResponse(HttpStatus.NOT_FOUND, "Not found", null);
     }
 
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<ApiResponse> accessDeniedException(AccessDeniedException e) {
-        log.error("Access denied: {}", e);
+        log.error("Access denied: {}", e.getMessage());
         return ResponseUtils.buildResponse(HttpStatus.FORBIDDEN, "Access denied", null);
     }
 }

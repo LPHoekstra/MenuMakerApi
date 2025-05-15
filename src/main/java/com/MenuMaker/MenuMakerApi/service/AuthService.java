@@ -1,18 +1,12 @@
 package com.MenuMaker.MenuMakerApi.service;
 
-import java.util.Base64;
 import java.util.Date;
 
-import javax.crypto.SecretKey;
-
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.MenuMaker.MenuMakerApi.model.UserModel;
 import com.MenuMaker.MenuMakerApi.repository.UserRepository;
 
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -20,52 +14,10 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service
 public class AuthService {
-    private final SecretKey secretKey;
-
     private final UserRepository userRepository;
 
-    public AuthService(@Value("${secretKey}") String secret, UserRepository userRepository) {
-        this.secretKey = Keys.hmacShaKeyFor(Base64.getDecoder().decode(secret));
+    public AuthService(UserRepository userRepository) {
         this.userRepository = userRepository;
-    }
-
-    /**
-     * 
-     * @param email to put in the token
-     * @return the token with an expiration of 10min
-     */
-    public String shortTimeToken(String email) {
-        log.debug("Creating a short time token for email: {}", email);
-        final Date expirationDate = new Date(new Date().getTime() + 10 * 60 * 1000L);
-
-        return createToken(email, expirationDate);
-    }
-
-    /**
-     * 
-     * @param email to put in the token
-     * @return the token with an expiration of 6 hours
-     */
-    public String longTimeToken(String email) {
-        log.debug("Creating a 6 hours expiration token for email: {}", email);
-        final Date expirationDate = new Date(new Date().getTime() + 6 * 60 * 60 * 1000L);
-
-        return createToken(email, expirationDate);
-    }
-
-    /**
-     * 
-     * @param token to get the email from
-     * @return the email
-     */
-    public String getEmailFromToken(String token) {
-        log.debug("Getting email from token: {}", token);
-        return Jwts.parser()
-                .verifyWith(secretKey)
-                .build()
-                .parseSignedClaims(token)
-                .getPayload()
-                .getSubject();
     }
 
     /**
@@ -132,20 +84,5 @@ public class AuthService {
 
         response.addCookie(tokenCookie);
         response.addCookie(isConnectedCookie);
-    }
-
-    /**
-     * 
-     * @param email          of the user to put in the token
-     * @param expirationDate of the token
-     * @return the token
-     */
-    private String createToken(String email, Date expirationDate) {
-        return Jwts.builder()
-                .subject(email)
-                .issuedAt(new Date())
-                .expiration(expirationDate)
-                .signWith(secretKey)
-                .compact();
     }
 }

@@ -17,6 +17,7 @@ import com.MenuMaker.MenuMakerApi.model.request.LoginRequest;
 import com.MenuMaker.MenuMakerApi.model.response.ApiResponse;
 import com.MenuMaker.MenuMakerApi.service.AuthService;
 import com.MenuMaker.MenuMakerApi.service.EmailService;
+import com.MenuMaker.MenuMakerApi.service.TokenService;
 import com.MenuMaker.MenuMakerApi.utils.ResponseUtils;
 
 import jakarta.mail.MessagingException;
@@ -38,10 +39,12 @@ public class AuthController {
 
     private final AuthService authService;
     private final EmailService emailService;
+    private final TokenService tokenService;
 
-    public AuthController(AuthService authService, EmailService emailService) {
+    public AuthController(AuthService authService, EmailService emailService, TokenService tokenService) {
         this.authService = authService;
         this.emailService = emailService;
+        this.tokenService = tokenService;
     }
 
     @PostMapping("/login")
@@ -49,7 +52,7 @@ public class AuthController {
         try {
             log.debug("Login from {}", loginRequest.getEmail());
 
-            String token = authService.shortTimeToken(loginRequest.getEmail());
+            String token = tokenService.shortTimeToken(loginRequest.getEmail());
             String link = backendDomain + "/api/v1/auth/login/" + token;
 
             emailService.sendMagicLink(loginRequest.getEmail(), link);
@@ -67,14 +70,14 @@ public class AuthController {
         try {
             log.debug("Authentification with short time token {}", token);
 
-            String email = authService.getEmailFromToken(token);
+            String email = tokenService.getEmailFromToken(token);
             boolean isEmailInDB = authService.isEmailRegistered(email);
 
             if (!isEmailInDB) {
                 authService.registerUser(email);
             }
 
-            String longTimeToken = authService.longTimeToken(email);
+            String longTimeToken = tokenService.longTimeToken(email);
 
             authService.createAuthCookie(response, longTimeToken);
             response.sendRedirect(frontendDomain + "/dashboard");
@@ -93,8 +96,7 @@ public class AuthController {
             HttpServletResponse response) {
         log.debug("logout token {}", authToken);
 
-        // implement blacklist for token
-        log.info("token blacklisted {}", authToken);
+        tokenService.addTokenToBlacklist(authToken);
 
         authService.deleteAuthCookie(response);
 
