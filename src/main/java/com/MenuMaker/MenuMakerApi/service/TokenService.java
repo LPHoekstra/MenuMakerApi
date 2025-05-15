@@ -1,12 +1,15 @@
 package com.MenuMaker.MenuMakerApi.service;
 
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 import javax.crypto.SecretKey;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
@@ -57,6 +60,27 @@ public class TokenService {
         }
 
         return false;
+    }
+
+    @Scheduled(fixedRate = 30 * 60 * 1000)
+    private void clearExpiredTokenInBlacklist() {
+        List<TokenBlacklistModel> completeBlacklist = tokenBlacklistRepository.findAll();
+
+        List<TokenBlacklistModel> expiredTokenList = new ArrayList<TokenBlacklistModel>();
+
+        // 6 hours
+        long validTime = 6 * 60 * 60 * 1000L;
+        for (TokenBlacklistModel tokenBlacklistModel : completeBlacklist) {
+            long creationDate = tokenBlacklistModel.getCreationDate().getTime();
+
+            long expirationDate = new Date().getTime() + validTime;
+
+            if (creationDate < expirationDate) {
+                expiredTokenList.add(tokenBlacklistModel);
+            }
+        }
+
+        tokenBlacklistRepository.deleteAll(expiredTokenList);
     }
 
     /**
