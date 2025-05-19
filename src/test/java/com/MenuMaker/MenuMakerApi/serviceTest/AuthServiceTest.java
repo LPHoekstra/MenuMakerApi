@@ -2,7 +2,6 @@ package com.MenuMaker.MenuMakerApi.serviceTest;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -109,9 +108,8 @@ public class AuthServiceTest {
 
         when(userRepository.existsByEmail(email)).thenReturn(true);
         // act
-        boolean isEmailExist = authService.isEmailRegistered(email);
+        authService.checkEmailIsRegistered(email);
 
-        assertTrue(isEmailExist);
         verify(userRepository, times(1)).existsByEmail(email);
     }
 

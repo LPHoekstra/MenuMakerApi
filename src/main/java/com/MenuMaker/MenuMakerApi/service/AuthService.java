@@ -25,9 +25,13 @@ public class AuthService {
      * @param email of the user
      * @return true if the email exist in the DB otherwise return false
      */
-    public boolean isEmailRegistered(String email) {
+    public void checkEmailIsRegistered(String email) {
         log.debug("Looking if the email {} exist in DB", email);
-        return userRepository.existsByEmail(email);
+        boolean isEmailInDB = userRepository.existsByEmail(email);
+
+        if (!isEmailInDB) {
+            registerUser(email);
+        }
     }
 
     /**

@@ -11,6 +11,7 @@ import com.MenuMaker.MenuMakerApi.model.response.ApiResponse;
 
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.security.SignatureException;
+import jakarta.mail.MessagingException;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.ValidationException;
 import lombok.extern.slf4j.Slf4j;
@@ -65,5 +66,11 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse> accessDeniedException(AccessDeniedException e) {
         log.error("Access denied: {}", e.getMessage());
         return ResponseUtils.buildResponse(HttpStatus.FORBIDDEN, "Access denied", null);
+    }
+
+    @ExceptionHandler(MessagingException.class)
+    public ResponseEntity<ApiResponse> messagingException(MessagingException e) {
+        log.error("Error while sending email: {}", e.getMessage());
+        return ResponseUtils.buildResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Error while email sending", null);
     }
 }
