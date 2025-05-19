@@ -56,9 +56,9 @@ public class MenusController {
         log.debug("Getting menu with token: {}", authToken);
 
         String userEmail = tokenService.getEmailFromToken(authToken);
-        List<UserMenusResponse> data = menuService.getMenusDatas(userEmail);
+        List<UserMenusResponse> userMenusList = menuService.getMenusDatas(userEmail);
 
-        return ResponseUtils.buildResponse(HttpStatus.OK, "Menus retrieved successfully", data);
+        return ResponseUtils.buildResponse(HttpStatus.OK, "Menus retrieved successfully", userMenusList);
     }
 
     @GetMapping("/{menuId}")
@@ -66,7 +66,6 @@ public class MenusController {
             @CookieValue("authToken") String authToken) {
         log.debug("Getting menu with id: {}", menuId);
 
-        // need token verification
         String userEmail = tokenService.getEmailFromToken(authToken);
         UserMenuResponse userMenuResponse = menuService.getMenu(menuId, userEmail);
 
@@ -79,7 +78,6 @@ public class MenusController {
             @RequestBody PutMenuRequest putMenuRequest) {
         log.debug("Put menu with id: {}", menuId);
 
-        // need token verification
         String userEmail = tokenService.getEmailFromToken(authToken);
         menuService.putMenu(menuId, userEmail, putMenuRequest);
 
@@ -91,7 +89,6 @@ public class MenusController {
             @CookieValue("authToken") String authToken) {
         log.debug("Deleting menu with id: {}", menuId);
 
-        // need token verification
         String userEmail = tokenService.getEmailFromToken(authToken);
         menuService.deleteMenu(menuId, userEmail);
 

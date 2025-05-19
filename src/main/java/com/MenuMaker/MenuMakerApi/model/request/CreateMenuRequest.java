@@ -13,9 +13,6 @@ import jakarta.validation.constraints.NotNull;
 
 public class CreateMenuRequest extends AbstractMenuData {
 
-    public CreateMenuRequest() {
-    }
-
     @Override
     @NotNull
     public Date getCreationDate() {

@@ -108,6 +108,7 @@ public class TokenService {
     }
 
     /**
+     * check if the token is blacklisted
      * 
      * @param token to get the email from
      * @return the email
