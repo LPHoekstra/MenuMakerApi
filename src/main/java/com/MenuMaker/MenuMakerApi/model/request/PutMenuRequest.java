@@ -6,7 +6,7 @@ import java.util.Map;
 
 import com.MenuMaker.MenuMakerApi.model.abstractClass.AbstractMenuData;
 import com.MenuMaker.MenuMakerApi.model.menuData.Dish;
-import com.MenuMaker.MenuMakerApi.model.menuData.Style;
+import com.MenuMaker.MenuMakerApi.model.menuData.style.Style;
 
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
