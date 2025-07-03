@@ -65,7 +65,6 @@ public class AuthController {
         return ResponseUtils.buildResponse(HttpStatus.OK, "Email sent", null);
     }
 
-    // TODO: what if the token is expired, no redirection or message ?
     @GetMapping("/login/{token}")
     public ResponseEntity<ApiResponse> getAuthToken(@PathVariable("token") String token, HttpServletResponse response)
             throws IOException {

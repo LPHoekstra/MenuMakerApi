@@ -1,4 +1,4 @@
-package com.MenuMaker.MenuMakerApi.model;
+package com.MenuMaker.MenuMakerApi.model.DAO;
 
 import java.util.Date;
 

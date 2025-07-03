@@ -15,6 +15,12 @@ public abstract class AbstractMenuData {
     public AbstractMenuData() {
     }
 
+    public AbstractMenuData(Date creationDate, Style style, Map<String, List<Dish>> content) {
+        this.creationDate = creationDate;
+        this.style = style;
+        this.content = content;
+    }
+
     public Date getCreationDate() {
         return this.creationDate;
     }

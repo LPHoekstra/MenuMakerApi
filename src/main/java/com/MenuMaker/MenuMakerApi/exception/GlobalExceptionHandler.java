@@ -1,4 +1,4 @@
-package com.MenuMaker.MenuMakerApi.utils;
+package com.MenuMaker.MenuMakerApi.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import com.MenuMaker.MenuMakerApi.model.response.ApiResponse;
+import com.MenuMaker.MenuMakerApi.utils.ResponseUtils;
 
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.security.SignatureException;

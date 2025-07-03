@@ -1,4 +1,4 @@
-package com.MenuMaker.MenuMakerApi.model;
+package com.MenuMaker.MenuMakerApi.model.DAO;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;

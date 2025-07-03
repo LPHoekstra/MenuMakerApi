@@ -26,4 +26,8 @@ public class ResponseUtils {
         return ResponseEntity.status(httpStatus)
                 .body(new ApiResponse(httpStatus.value(), message, data));
     }
+
+    public static ResponseEntity<ApiResponse> buildResponse(HttpStatus httpStatus, String message) {
+        return ResponseEntity.status(httpStatus).body(new ApiResponse(httpStatus.value(), message, null));
+    }
 }

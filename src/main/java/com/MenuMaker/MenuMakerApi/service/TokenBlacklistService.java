@@ -8,7 +8,7 @@ import java.util.Optional;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import com.MenuMaker.MenuMakerApi.model.TokenBlacklistModel;
+import com.MenuMaker.MenuMakerApi.model.DAO.TokenBlacklistModel;
 import com.MenuMaker.MenuMakerApi.repository.TokenBlacklistRepository;
 
 @Service

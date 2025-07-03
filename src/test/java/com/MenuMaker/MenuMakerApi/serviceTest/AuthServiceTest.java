@@ -17,7 +17,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import com.MenuMaker.MenuMakerApi.model.UserModel;
+import com.MenuMaker.MenuMakerApi.model.DAO.UserModel;
 import com.MenuMaker.MenuMakerApi.repository.UserRepository;
 import com.MenuMaker.MenuMakerApi.service.AuthService;
 import com.MenuMaker.MenuMakerApi.service.TokenService;

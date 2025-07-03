@@ -4,7 +4,7 @@ import java.util.Date;
 
 import org.springframework.stereotype.Service;
 
-import com.MenuMaker.MenuMakerApi.model.UserModel;
+import com.MenuMaker.MenuMakerApi.model.DAO.UserModel;
 import com.MenuMaker.MenuMakerApi.repository.UserRepository;
 
 import jakarta.servlet.http.Cookie;

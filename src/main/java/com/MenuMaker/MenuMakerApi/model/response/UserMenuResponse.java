@@ -11,8 +11,6 @@ import com.MenuMaker.MenuMakerApi.model.menuData.Style;
 public class UserMenuResponse extends AbstractMenuData {
 
     public UserMenuResponse(Date creationDate, Style style, Map<String, List<Dish>> content) {
-        super.setCreationDate(creationDate);
-        super.setStyle(style);
-        super.setContent(content);
+        super(creationDate, style, content);
     }
 }
