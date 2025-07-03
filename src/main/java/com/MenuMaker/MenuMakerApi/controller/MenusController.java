@@ -54,14 +54,14 @@ public class MenusController {
         if (tokenBlacklistService.isTokenBlacklisted(authToken)) {
             throw new TokenBlacklistedException("Token is blacklisted");
         }
-        log.info("verify token");
+        log.debug("verify token");
 
         this.userEmail = tokenService.getEmailFromToken(authToken);
     }
 
     @GetMapping("/userMenus")
     public ResponseEntity<ApiResponse> getUserMenus() {
-        log.info("Getting menu with token: {}");
+        log.debug("Getting menu with token: {}");
 
         List<GetUserMenusResponse> userMenusList = menuService.getMenus(this.userEmail);
 

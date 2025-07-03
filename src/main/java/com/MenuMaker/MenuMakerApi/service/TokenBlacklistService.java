@@ -22,21 +22,17 @@ public class TokenBlacklistService {
 
     /**
      * add a token to the blacklist in the DB.
-     * 
      * @param token
      * @return the saved entity, will never be null.
      */
     public TokenBlacklistModel addTokenToBlacklist(String token) {
-        TokenBlacklistModel tokenBlacklistModel = new TokenBlacklistModel();
-        tokenBlacklistModel.setToken(token);
-        tokenBlacklistModel.setCreationDate(new Date());
+        TokenBlacklistModel tokenBlacklistModel = new TokenBlacklistModel.Builder().token(token).build();
 
         return tokenBlacklistRepository.save(tokenBlacklistModel);
     }
 
     /**
      * check if token is blacklisted in the DB
-     * 
      * @param token
      * @return true if is in the DB, otherwise return false
      */
@@ -51,7 +47,7 @@ public class TokenBlacklistService {
     }
 
     /**
-     * clear expired token in DB
+     * clear expired token in DB every 30min
      */
     @Scheduled(fixedRate = 30 * 60 * 1000)
     private void clearExpiredTokenInBlacklist() {

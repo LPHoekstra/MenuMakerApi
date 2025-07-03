@@ -1,7 +1,5 @@
 package com.MenuMaker.MenuMakerApi.service;
 
-import java.util.Date;
-
 import org.springframework.stereotype.Service;
 
 import com.MenuMaker.MenuMakerApi.model.DAO.UserModel;
@@ -21,41 +19,46 @@ public class AuthService {
     }
 
     /**
-     * 
-     * @param email of the user
-     * @return true if the email exist in the DB otherwise return false
+     * Check if the email is registered in the DB, if not the user is registered.
+     * @param email from the user.
+     * @return the registered user if registered, otherwise return null.
      */
-    public void checkEmailIsRegistered(String email) {
-        log.debug("Looking if the email {} exist in DB", email);
-        boolean isEmailInDB = userRepository.existsByEmail(email);
-
-        if (!isEmailInDB) {
-            registerUser(email);
+    public UserModel registerIfEmailNotRegistered(String email) {
+        if (!isEmailRegistered(email)) {
+            return registerUser(email);
         }
+
+        return null;
     }
 
     /**
-     * 
-     * @param email of the user to register in DB
-     * @return the user registered
+     * Check if the email is registered as a user in the DB
+     * @param email of the user
+     * @return true if the email exist in the DB otherwise return false
      */
-    public UserModel registerUser(String email) {
+    private boolean isEmailRegistered(String email) {
+        log.debug("Looking if the email {} exist in DB", email);
+        return userRepository.existsByEmail(email);
+    }
+
+    /**
+     * Register a new user in the DB, must check if a user with this email is already in DB.
+     * @param email from user to register in DB.
+     * @return the user registered.
+     */
+    private UserModel registerUser(String email) {
         log.debug("Registering a new user: {}", email);
-        UserModel user = new UserModel();
-        user.setEmail(email);
-        user.setCreatedAt(new Date());
-        user.setUpdatedAt(new Date());
-        user.setRestaurantName(null);
+        UserModel user = new UserModel.Builder().email(email).build();
 
         return userRepository.save(user);
     }
 
     /**
-     * 
-     * @param response      httpServletResponse
+     * Create a authToken and isConnected cookie. Then add it to the {@link HttpServletResponse}.
+     * @param servletResponse
      * @param longTimeToken
      */
-    public void createAuthCookie(HttpServletResponse response, String longTimeToken) {
+    public void createAuthCookie(HttpServletResponse servletResponse, String longTimeToken) {
         int cookieExpiration = 21600; // 6h expiration
 
         Cookie tokenCookie = new Cookie("authToken", longTimeToken);
@@ -69,12 +72,12 @@ public class AuthService {
         isConnectedCookie.setMaxAge(cookieExpiration);
         // cookie.setSecure(true); for https
 
-        response.addCookie(tokenCookie);
-        response.addCookie(isConnectedCookie);
+        servletResponse.addCookie(tokenCookie);
+        servletResponse.addCookie(isConnectedCookie);
     }
 
     /**
-     * 
+     * Delete the cookie authToken and isConnected by setting there max age to 0.
      * @param response httpServletResponse
      */
     public void deleteAuthCookie(HttpServletResponse response) {

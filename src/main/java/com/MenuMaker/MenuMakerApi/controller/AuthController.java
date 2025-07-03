@@ -57,36 +57,27 @@ public class AuthController {
     public ResponseEntity<ApiResponse> login(@Valid @RequestBody LoginRequest loginRequest) throws MessagingException {
         log.debug("Login from {}", loginRequest.getEmail());
 
-        String token = tokenService.shortTimeToken(loginRequest.getEmail());
+        String token = tokenService.createShortTimeToken(loginRequest.getEmail());
         String link = backendDomain + "/api/v1/auth/login/" + token;
 
         emailService.sendMagicLink(loginRequest.getEmail(), link);
 
-        return ResponseUtils.buildResponse(HttpStatus.OK, "Email sent", null);
+        return ResponseUtils.buildResponse(HttpStatus.OK, "Email sent");
     }
 
     @GetMapping("/login/{token}")
-    public ResponseEntity<ApiResponse> getAuthToken(@PathVariable("token") String token, HttpServletResponse response)
-            throws IOException {
-        try {
-            log.debug("Authentification with short time token {}", token);
+    public ResponseEntity<ApiResponse> getAuthToken(@PathVariable("token") String token, HttpServletResponse response) throws IOException {
+        log.debug("Authentification with short time token {}", token);
 
-            String email = tokenService.getEmailFromToken(token);
-            authService.checkEmailIsRegistered(email);
+        String email = tokenService.getEmailFromToken(token);
+        authService.registerIfEmailNotRegistered(email);
 
-            String longTimeToken = tokenService.longTimeToken(email);
+        String longTimeToken = tokenService.createLongTimeToken(email);
 
-            authService.createAuthCookie(response, longTimeToken);
-            response.sendRedirect(frontendDomain + "/dashboard");
+        authService.createAuthCookie(response, longTimeToken);
+        response.sendRedirect(frontendDomain + "/dashboard");
 
-            return ResponseUtils.buildResponse(HttpStatus.MOVED_PERMANENTLY, "Successfully authenticate", null,
-                    response);
-        } catch (Exception e) {
-            log.error("Error sending auth token {}", e);
-            response.sendRedirect(frontendDomain);
-            return ResponseUtils.buildResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error", null,
-                    response);
-        }
+        return ResponseUtils.buildResponse(HttpStatus.MOVED_PERMANENTLY, "Successfully authenticate", null, response);
     }
 
     @DeleteMapping("/logout")
@@ -95,9 +86,8 @@ public class AuthController {
         log.debug("logout token {}", authToken);
 
         tokenBlacklistService.addTokenToBlacklist(authToken);
-
         authService.deleteAuthCookie(response);
 
-        return ResponseUtils.buildResponse(HttpStatus.OK, "Successfully disconnected", null);
+        return ResponseUtils.buildResponse(HttpStatus.OK, "Successfully disconnected");
     }
 }

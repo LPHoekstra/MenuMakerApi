@@ -26,7 +26,7 @@ public class TokenService {
      * @param email to put in the token
      * @return the token with an expiration of 10min
      */
-    public String shortTimeToken(String email) {
+    public String createShortTimeToken(String email) {
         log.debug("Creating a short time token for email: {}", email);
         final Date expirationDate = new Date(new Date().getTime() + 10 * 60 * 1000L);
 
@@ -38,7 +38,7 @@ public class TokenService {
      * @param email to put in the token
      * @return the token with an expiration of 6 hours
      */
-    public String longTimeToken(String email) {
+    public String createLongTimeToken(String email) {
         log.debug("Creating a 6 hours expiration token for email: {}", email);
         final Date expirationDate = new Date(new Date().getTime() + 6 * 60 * 60 * 1000L);
 
@@ -46,8 +46,7 @@ public class TokenService {
     }
 
     /**
-     * check if the token is blacklisted
-     * 
+     * Get the email stored in the JWT
      * @param token to get the email from
      * @return the email
      */
@@ -64,7 +63,7 @@ public class TokenService {
 
     /**
      * 
-     * @param email          of the user to put in the token
+     * @param email from user to put in the token
      * @param expirationDate of the token
      * @return the token
      */

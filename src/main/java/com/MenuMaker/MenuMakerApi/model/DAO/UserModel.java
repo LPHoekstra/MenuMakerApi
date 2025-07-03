@@ -15,6 +15,34 @@ public class UserModel {
     private Date updatedAt;
     // add an img
 
+    private UserModel(Builder builder) {
+        this.email = builder.email;
+        this.restaurantName = builder.restaurantName;
+        this.createdAt = builder.createdAt;
+        this.updatedAt = builder.updatedAt;
+    }
+
+    public static class Builder {
+        private String email;
+        private String restaurantName = null;
+        private Date createdAt = new Date();
+        private Date updatedAt = new Date();
+        
+        public Builder email(String email) {
+            this.email = email;
+            return this;
+        }
+
+        public Builder restaurantName(String name) {
+            this.restaurantName = name;
+            return this;
+        }
+
+        public UserModel build() {
+            return new UserModel(this);
+        }
+    }
+
     public String getId() {
         return this.id;
     }

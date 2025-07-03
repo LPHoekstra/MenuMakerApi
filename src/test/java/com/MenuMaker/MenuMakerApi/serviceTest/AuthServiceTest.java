@@ -47,7 +47,7 @@ public class AuthServiceTest {
         String userEmail = "test@gmail.com";
 
         // act
-        String token = tokenService.shortTimeToken(userEmail);
+        String token = tokenService.createShortTimeToken(userEmail);
 
         assertNotNull(token, "Token must not be null");
 
@@ -71,7 +71,7 @@ public class AuthServiceTest {
         String userEmail = "test@gmail.com";
 
         // act
-        String token = tokenService.longTimeToken(userEmail);
+        String token = tokenService.createLongTimeToken(userEmail);
 
         assertNotNull(token, "Token must not be null");
 
@@ -95,7 +95,7 @@ public class AuthServiceTest {
         String userEmail = "test@gmail.com";
 
         // act
-        String token = tokenService.shortTimeToken(userEmail);
+        String token = tokenService.createShortTimeToken(userEmail);
 
         String email = tokenService.getEmailFromToken(token);
 
@@ -108,7 +108,7 @@ public class AuthServiceTest {
 
         when(userRepository.existsByEmail(email)).thenReturn(true);
         // act
-        authService.checkEmailIsRegistered(email);
+        authService.isEmailRegistered(email);
 
         verify(userRepository, times(1)).existsByEmail(email);
     }
