@@ -4,12 +4,18 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import com.MenuMaker.MenuMakerApi.model.menuData.Dish;
+import com.MenuMaker.MenuMakerApi.model.menuData.dish.Dish;
 import com.MenuMaker.MenuMakerApi.model.menuData.style.Style;
 
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+
 public abstract class AbstractMenuData {
+    @NotNull
     private Date creationDate;
+    @NotNull
     private Style style;
+    @NotEmpty
     private Map<String, List<Dish>> content;
 
     public AbstractMenuData() {

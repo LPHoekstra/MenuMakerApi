@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.MenuMaker.MenuMakerApi.model.abstractClass.AbstractMenuData;
+import com.MenuMaker.MenuMakerApi.model.menuData.dish.Dish;
 import com.MenuMaker.MenuMakerApi.model.menuData.style.Style;
 
 public class MenuData extends AbstractMenuData {
